@@ -15,9 +15,13 @@ public class PlayerController : MonoBehaviour
     private Vector2 pointA;
     private Vector2 pointB;
     private bool isTouching;
+    private bool isRunning;
     public bool isGrounded;
     public bool isJumping;
+    public bool isAttacking;
     public Transform groundCheckLimit;
+    Vector2 direction;
+    public float attackCount = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,22 +34,47 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             pointA = Input.mousePosition;
+            StartCoroutine(Attack());
+            
         }
         if (Input.GetMouseButton(0))
         {
             pointB = Input.mousePosition;
+            if (attackCount == 0)
+            {
             isTouching = true;
+
+            }
             
         }
         else
             isTouching = false;
 
         an.SetBool("Grounded", isGrounded);
-        an.SetBool("Running", isTouching);
+        an.SetBool("Running", isRunning);
+        an.SetBool("Attacking", isAttacking);
+        an.SetFloat("AttackCount", attackCount);
 
-
+        if (target.position != transform.position)
+        {
+            isRunning = true;
+        }
+        else
+        {
+            isRunning = false;
+        }
 
         GroundCheck();
+
+        if (attackCount > 1)
+        {
+            isAttacking = false;
+            attackCount = 0;
+        }
+        if (attackCount == 0)
+        {
+            isAttacking = false;
+        }
     }
     private void FixedUpdate()
     {
@@ -53,18 +82,24 @@ public class PlayerController : MonoBehaviour
         {
             pivot.LookAt(target);
             Vector2 offset = pointA - pointB;
-            Vector2 direction = Vector2.ClampMagnitude(offset, 2f);
+            direction = Vector2.ClampMagnitude(offset, 2f);
             direction = direction * -1;
+            print(direction);
             Vector3 targetNewPosition = new Vector3(transform.position.x + direction.x, transform.position.y, transform.position.z + direction.y);
-            target.position = Vector3.Lerp(target.position, targetNewPosition, 0.1f);
+            target.position = Vector3.Lerp(target.position, targetNewPosition, 1f);
             MovePlayer();
         }
+        else
+        {
+            target.position = transform.position;
+        }
+
     }
     void MovePlayer() {
         if (isGrounded)
         {
         transform.position = Vector3.MoveTowards(transform.position,target.position, moveSpeed * Time.fixedDeltaTime);
-        playerModel.transform.rotation = Quaternion.Slerp(playerModel.transform.rotation, Quaternion.Euler(0f, pivot.rotation.eulerAngles.y, 0f), 0.1f);
+        playerModel.transform.rotation = Quaternion.Slerp(playerModel.transform.rotation, Quaternion.Euler(0f, pivot.rotation.eulerAngles.y, 0f), 0.3f);
 
         }
 
@@ -82,7 +117,7 @@ public class PlayerController : MonoBehaviour
 
         
     }
-   
+   /*
     void MoveTarget(){
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -92,9 +127,10 @@ public class PlayerController : MonoBehaviour
             target.position = hit.point;
         }
     }
-
+    */
     void Jump()
     {
+        isGrounded = false;
         isJumping = true;
         an.SetTrigger("Jump");
         rb.AddForce(Vector3.up * jumpForce);
@@ -105,7 +141,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            target.position = transform.position;
+            
             StartCoroutine(JumpReset());
 
         }
@@ -113,8 +149,24 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator JumpReset()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.3f);
         isJumping = false;
+        target.position = transform.position;
+    }
 
+    IEnumerator Attack()
+    {
+        isAttacking = true;
+        an.SetTrigger("Attack");
+        
+        
+        attackCount += 1;
+        if (attackCount != 0)
+        {
+            yield return new WaitForSeconds(0.3f);
+            attackCount = 0;
+            isAttacking = false;
+        }
+       
     }
 }
