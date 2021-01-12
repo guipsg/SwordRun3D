@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckLimit;
     Vector2 direction;
     public float attackCount = 0;
+    public GameObject swordHit;
     // Start is called before the first frame update
     void Start()
     {
@@ -66,15 +67,12 @@ public class PlayerController : MonoBehaviour
 
         GroundCheck();
 
-        if (attackCount > 1)
+        if (attackCount >= 2)
         {
             isAttacking = false;
             attackCount = 0;
         }
-        if (attackCount == 0)
-        {
-            isAttacking = false;
-        }
+
     }
     private void FixedUpdate()
     {
@@ -151,22 +149,22 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
         isJumping = false;
-        target.position = transform.position;
     }
 
     IEnumerator Attack()
     {
         isAttacking = true;
+        attackCount += 1;
         an.SetTrigger("Attack");
         
-        
-        attackCount += 1;
         if (attackCount != 0)
         {
             yield return new WaitForSeconds(0.3f);
             attackCount = 0;
             isAttacking = false;
+            
         }
-       
+        
+        
     }
 }

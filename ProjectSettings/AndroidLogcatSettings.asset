@@ -3,8 +3,8 @@
     "m_SelectedPackage": {
         "deviceId": "0038210307",
         "name": "com.HeavyFunStudio.SwordRun3D",
-        "processId": 30934,
-        "exited": false
+        "processId": 16919,
+        "exited": true
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
@@ -24,6 +24,18 @@
             "deviceId": "0038210307",
             "name": "com.HeavyFunStudio.SwordRun3D",
             "processId": 30934,
+            "exited": true
+        },
+        {
+            "deviceId": "0038210307",
+            "name": "com.HeavyFunStudio.SwordRun3D",
+            "processId": 16919,
+            "exited": true
+        },
+        {
+            "deviceId": "0038210307",
+            "name": "com.motorola.launcher3",
+            "processId": 10256,
             "exited": false
         }
     ],
@@ -78,6 +90,6 @@
         "Behavior": 1
     },
     "m_Filter": "",
-    "m_FilterIsRegularExpression": false,
+    "m_FilterIsRegularExpression": true,
     "m_SymbolPaths": []
 }
