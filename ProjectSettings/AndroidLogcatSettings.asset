@@ -3,39 +3,57 @@
     "m_SelectedPackage": {
         "deviceId": "0038210307",
         "name": "com.HeavyFunStudio.SwordRun3D",
-        "processId": 16919,
-        "exited": true
+        "processId": 12780,
+        "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
         {
             "deviceId": "0038210307",
-            "name": "com.DefaultCompany.SwordRun3D",
-            "processId": 16467,
-            "exited": true
-        },
-        {
-            "deviceId": "0038210307",
-            "name": "com.DefaultCompany.SwordRun3D",
-            "processId": 16913,
-            "exited": true
-        },
-        {
-            "deviceId": "0038210307",
             "name": "com.HeavyFunStudio.SwordRun3D",
-            "processId": 30934,
-            "exited": true
-        },
-        {
-            "deviceId": "0038210307",
-            "name": "com.HeavyFunStudio.SwordRun3D",
-            "processId": 16919,
+            "processId": 14820,
             "exited": true
         },
         {
             "deviceId": "0038210307",
             "name": "com.motorola.launcher3",
-            "processId": 10256,
+            "processId": 2900,
+            "exited": false
+        },
+        {
+            "deviceId": "0038210307",
+            "name": "com.HeavyFunStudio.SwordRun3D",
+            "processId": 17284,
+            "exited": true
+        },
+        {
+            "deviceId": "0038210307",
+            "name": "com.HeavyFunStudio.SwordRun3D",
+            "processId": 21230,
+            "exited": true
+        },
+        {
+            "deviceId": "0038210307",
+            "name": "com.HeavyFunStudio.SwordRun3D",
+            "processId": 31384,
+            "exited": true
+        },
+        {
+            "deviceId": "0038210307",
+            "name": "com.HeavyFunStudio.SwordRun3D",
+            "processId": 9090,
+            "exited": true
+        },
+        {
+            "deviceId": "0038210307",
+            "name": "com.HeavyFunStudio.SwordRun3D",
+            "processId": 12780,
+            "exited": false
+        },
+        {
+            "deviceId": "192.168.0.5:5555",
+            "name": "com.HeavyFunStudio.SwordRun3D",
+            "processId": 6730,
             "exited": false
         }
     ],
@@ -86,7 +104,7 @@
             true,
             true
         ],
-        "MemoryGroup": 1,
+        "MemoryGroup": 0,
         "Behavior": 1
     },
     "m_Filter": "",

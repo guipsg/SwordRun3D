@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     public Transform target;
@@ -14,19 +15,26 @@ public class PlayerController : MonoBehaviour
     public float jumpLenght;
     private Vector2 pointA;
     private Vector2 pointB;
-    private bool isTouching;
-    private bool isRunning;
+    private Vector3 storeTarget;
+    public bool isTouching;
+    public bool attacked;
+    public bool isRunning;
     public bool isGrounded;
     public bool isJumping;
     public bool isAttacking;
     public Transform groundCheckLimit;
     Vector2 direction;
+    Vector3 targetNewPosition;
+    Vector2 offset;
     public float attackCount = 0;
     public GameObject swordHit;
+    public bool useButtonToAttack;
+    public GameObject attackButton;
+    float targetSpeed = 0.3f;
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
@@ -34,29 +42,53 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            pointA = Input.mousePosition;
-            StartCoroutine(Attack());
-            
-        }
-        if (Input.GetMouseButton(0))
-        {
-            pointB = Input.mousePosition;
-            if (attackCount == 0)
+            if (!attacked)
             {
-            isTouching = true;
+                pointA = Input.mousePosition;
 
             }
-            
+            if (!useButtonToAttack)
+            {
+                StartCoroutine(Attack());
+            }
+
+
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            if (!isTouching)
+            {
+                StartCoroutine(MouseHold());
+            }
+
+            if (isTouching)
+            {
+                pointB = Input.mousePosition;
+                pivot.LookAt(target,Vector3.up);
+                offset = pointA - pointB;
+                direction = Vector2.ClampMagnitude(offset, 1f);
+                direction = direction * -1;
+                if (!isAttacking)
+                {
+                    targetNewPosition = new Vector3(transform.position.x + direction.x, transform.position.y, transform.position.z + direction.y);
+                    target.position = Vector3.Lerp(target.position, targetNewPosition, 0.5f);
+                }
+            }
         }
         else
+        {
+            pointB = pointA;
             isTouching = false;
+        }
 
+        an.SetBool("Touching", isTouching);
         an.SetBool("Grounded", isGrounded);
         an.SetBool("Running", isRunning);
         an.SetBool("Attacking", isAttacking);
         an.SetFloat("AttackCount", attackCount);
 
-        if (target.position != transform.position)
+        if (pointB != pointA)
         {
             isRunning = true;
         }
@@ -65,39 +97,32 @@ public class PlayerController : MonoBehaviour
             isRunning = false;
         }
 
-        GroundCheck();
+        
 
-        if (attackCount >= 2)
-        {
-            isAttacking = false;
-            attackCount = 0;
-        }
+        
 
     }
     private void FixedUpdate()
     {
+        
+
         if (isTouching)
         {
-            pivot.LookAt(target);
-            Vector2 offset = pointA - pointB;
-            direction = Vector2.ClampMagnitude(offset, 2f);
-            direction = direction * -1;
-            print(direction);
-            Vector3 targetNewPosition = new Vector3(transform.position.x + direction.x, transform.position.y, transform.position.z + direction.y);
-            target.position = Vector3.Lerp(target.position, targetNewPosition, 1f);
             MovePlayer();
         }
         else
         {
-            target.position = transform.position;
+            //offset = Vector2.zero;
+            
+            //target.position = transform.position;
         }
-
+        GroundCheck();
     }
     void MovePlayer() {
         if (isGrounded)
         {
         transform.position = Vector3.MoveTowards(transform.position,target.position, moveSpeed * Time.fixedDeltaTime);
-        playerModel.transform.rotation = Quaternion.Slerp(playerModel.transform.rotation, Quaternion.Euler(0f, pivot.rotation.eulerAngles.y, 0f), 0.3f);
+        playerModel.transform.rotation = Quaternion.Slerp(playerModel.transform.rotation, Quaternion.Euler(0f, pivot.rotation.eulerAngles.y, 0f), 0.2f);
 
         }
 
@@ -132,7 +157,7 @@ public class PlayerController : MonoBehaviour
         isJumping = true;
         an.SetTrigger("Jump");
         rb.AddForce(Vector3.up * jumpForce);
-        rb.AddForce(pivot.forward * jumpLenght);
+        rb.AddForce(playerModel.transform.forward * jumpLenght);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -151,20 +176,52 @@ public class PlayerController : MonoBehaviour
         isJumping = false;
     }
 
+    public void StartAttack()
+    {
+        attacked = true;
+        StartCoroutine(Attack());
+        targetSpeed = 0.1f;
+    }
     IEnumerator Attack()
     {
+        yield return new WaitForSeconds(0.03f);
+        if (isGrounded && !isAttacking)
+        {
+            pointA = Input.mousePosition;
+            target.Translate(playerModel.transform.forward * 2f);
+            rb.AddForce(Vector3.up * 100f);
+            rb.AddForce(playerModel.transform.forward * 100f);
+        }
+        attacked = false;
         isAttacking = true;
         attackCount += 1;
         an.SetTrigger("Attack");
-        
-        if (attackCount != 0)
+        if (attackCount == 1)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.5f);
             attackCount = 0;
             isAttacking = false;
-            
+            targetSpeed = 0.3f;
         }
-        
-        
     }
+    IEnumerator MouseHold()
+    {
+        yield return new WaitForSeconds(0.05f);
+        isTouching = true;
+    }
+    public void ActivateAttackButton(Toggle ok)
+    {
+        useButtonToAttack = ok.isOn;
+
+        if (useButtonToAttack)
+        {
+            attackButton.SetActive(true);
+        }
+        else
+        {
+            attackButton.SetActive(false);
+        }
+    }
+
+
 }

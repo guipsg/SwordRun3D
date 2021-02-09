@@ -22,7 +22,12 @@ public class GameController : MonoBehaviour
 
         if (player.gameObject.transform.position.y < -20f)
         {
-            SceneManager.LoadScene("SampleScene");
+            ReloadScene();
         }
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
